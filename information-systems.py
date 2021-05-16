@@ -258,11 +258,13 @@ def get_courses():
         student = students.find_one({"$and":[{"email":data['email']},{"courses":{'$exists': True}}]})
         if (student != None):
             output = {"name":student['name']}
+            passed_courses=0
             for course in student['courses']:
                 for grade in course.values():
                     if (grade>=5):
+                        passed_courses+=1
                         output.update(course)
-            if (output != None):
+            if (passed_courses > 0):
                 return Response(json.dumps(output), status=200, mimetype='application/json')
             else:
                 return Response("There are no courses available for this student", status=400, mimetype='application/json')
